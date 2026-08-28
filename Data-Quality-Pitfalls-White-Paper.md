@@ -5,25 +5,19 @@
 
 *The views expressed in this paper are the author's own and do not represent the views of Capital One.*
 
-*[Working title — revisit once Section 3's framework is fleshed out.]*
-
 ---
 
 # **Abstract**
 
-*[Draft — needs citations before this leaves scaffold stage. Structure to follow: cost/scale hook, thesis statement, taxonomy preview, framework preview, outcome preview. Two paragraphs: first grounds the problem in cross-industry cost figures, second states the proposed framework and reported outcomes.]*
+Organizations across every industry treat data-quality failures as isolated incidents: a bad report here, a failed compliance filing there, a machine learning model that quietly degrades in production. Poor data quality costs the U.S. economy an estimated $3 trillion annually (Redman, 2016), and the pattern repeats inside individual organizations: enterprises report an average cost of roughly $12.9 million per year from bad data, based on a survey of reference customers already running data-quality programs (Gartner, 2020).
 
-Organizations across every industry treat data-quality failures as isolated incidents: a bad report here, a failed compliance filing there, a machine learning model that quietly degrades in production. Poor data quality costs the U.S. economy an estimated $3 trillion annually (Redman, 2016) [CITATION NEEDED — verify against research file Section 0], and the pattern repeats at the level of individual organizations: [CITATION NEEDED — per-enterprise annual cost figure].
-
-This paper argues [revise per tone convention — state directly instead] that these failures are not independent incidents but symptoms of the same missing infrastructure, recurring across six failure-mode categories: structural, semantic, identity/duplication, statistical (including ML-specific drift and bias), temporal, and governance. It proposes a three-part prevention framework — **data contracts at the boundary**, **continuous observability and lineage**, and **named ownership and accountability**. Organizations that adopt this kind of framework report [CITATION NEEDED — outcome figures: incident reduction, MTTR improvement, etc.].
+These failures are not independent incidents. They recur across six failure-mode categories — structural, semantic, identity and duplication, statistical and distributional (including machine-learning-specific drift and bias), temporal, and governance — because most organizations have no infrastructure designed to catch them systematically rather than after the fact. This paper proposes a three-part prevention framework: data contracts at the boundary, continuous observability and lineage, and named ownership and accountability, made concrete through a validation-checkpoint model that specifies when a check should run (ingress, in-flight, or egress) and how deep it should go (syntactic, internally consistent, or verified against external ground truth). Organizations that adopt comparable data-observability practices report returns as high as 358% over three years (Forrester Consulting / Monte Carlo, 2025); organizations without such practices report data-quality incidents rising year over year and taking longer to detect and resolve (Monte Carlo / Wakefield Research, 2023).
 
 ---
 
 # **1. Introduction**
 
 ## **Background**
-
-*[Draft narrative, no citations yet.]*
 
 Every organization that collects, stores, or acts on data is implicitly betting that the data reflects reality closely enough to make a good decision from it. That bet fails constantly, and usually silently: a schema changes upstream and nobody downstream is told; two teams use the same column name to mean two different things; a duplicate customer record splits one person's history into two profiles; a training set drifts away from the population a model now serves in production; a nightly job fails partway through and nobody notices for three weeks. None of these are exotic. They are the ordinary condition of production data, and they occur at a comparable rate regardless of industry, team maturity, or the sophistication of the systems built on top of the data.
 
@@ -35,31 +29,31 @@ Organizations treat these failures as one-off incidents to be triaged and forgot
 
 # **2. A Taxonomy of Data Quality Pitfalls**
 
-*[Outline stage — each subsection needs a citation before it leaves scaffold. Ordered roughly from "closest to ingestion" to "closest to organizational process."]*
+The six categories below are ordered from pitfalls closest to data ingestion to pitfalls rooted in organizational process. Each maps to a specific part of the prevention framework proposed in Section 3.
 
 ## **2.1 Structural Pitfalls**
 
-Schema drift (a producer changes a field's type, name, or nullability without notice), encoding/format inconsistency (dates, currencies, units mixed across sources), and silent truncation or type coercion at ingestion. `[CITATION NEEDED]`
+Schema drift, encoding and format inconsistency, and silent truncation or type coercion at ingestion are the most immediate data-quality pitfalls, because they happen at the boundary between systems built by different teams with no shared contract. A producer changes a field's type, name, or nullability without notice; a downstream pipeline built against the old shape breaks, or worse, silently miscomputes instead of failing loudly. Sanderson (2022) frames this as engineering and data teams treating a production database as a "non-consensual API": one side changes the schema for its own reasons, the other side finds out only when a pipeline breaks.
 
 ## **2.2 Semantic Pitfalls**
 
-The same field name means different things in different systems or teams (five definitions of "active customer" across five departments), unit mismatches that pass type validation but not meaning ("amount" in cents in one system, dollars in another), and undocumented business logic embedded in ETL rather than in a shared definition. `[CITATION NEEDED]`
+A field can pass every structural check and still be wrong in meaning. The same named metric — "monthly active users," "revenue" — is independently redefined in a BI tool, a notebook, and a dashboard, producing different "correct" numbers because the underlying logic differs: one counts pending invoices as revenue, another doesn't (dbt Labs). Unit mismatches follow the same pattern — an "amount" field stored in cents in one system and dollars in another passes type validation without complaint. Undocumented business logic embedded in ETL rather than a shared definition is why these pitfalls tend to surface as disagreement between departments' dashboards rather than as an outright pipeline failure.
 
 ## **2.3 Identity & Duplication Pitfalls**
 
-Fragmented or duplicate records for the same real-world entity: the same person or organization exists as separate, disconnected records because names, addresses, or identifiers were captured inconsistently across systems. Reported duplicate-record rates commonly run 10–30% in financial services and 10–22% in healthcare. `[CITATION NEEDED — source independently]`
+Fragmented or duplicate records for the same real-world entity are a special case of semantic drift: the same person or organization exists as separate, disconnected records because names, addresses, or identifiers were captured inconsistently across systems. The consequences are measurable, not merely cosmetic. A 2025 propensity-matched cohort study in *BMJ Quality & Safety* found patients with duplicate medical records had roughly five times the adjusted risk of inpatient death and 3.5 times the risk of ICU admission, alongside 32% longer hospital stays, compared to matched patients without duplicates; duplicate-record prevalence in that cohort was estimated at 5–10% of all records reviewed.
 
 ## **2.4 Statistical & Distributional Pitfalls (including ML-specific)**
 
-Training/serving skew, label noise, sampling bias, distribution drift after deployment, and feedback loops where a model's own outputs pollute the data used to retrain it. Candidate anchor: Sambasivan et al., "Data Cascades in High-Stakes AI" (CHI 2021) — peer-reviewed, argues data quality problems compound invisibly through ML pipelines. `[CITATION NEEDED — verify this paper's exact findings before citing]`
+Machine learning systems add a category of pitfall that traditional reporting pipelines don't have: statistical drift between the data a model was trained on and the data it now serves in production, label noise, sampling bias, and feedback loops where a model's own outputs pollute the data used to retrain it. Sambasivan et al. (2021) interviewed 53 AI practitioners across India, East and West Africa, and the United States and found 92% had experienced at least one "data cascade" — a compounding downstream failure traced back to an upstream data issue — with 45% experiencing multiple cascades; their central finding is that data work is structurally undervalued relative to model work, which is the root cause. Sculley et al. (2015) name the specific mechanisms: entanglement, where changing any one input feature changes the behavior of others ("changing anything changes everything"), hidden feedback loops, and undeclared consumers, arguing that data dependencies in ML systems are as costly as code dependencies but far harder to detect. The consequences are not theoretical: Unity Technologies disclosed on its Q1 2022 earnings call that ingesting bad training data from a large customer degraded its Audience Pinpointer ad-targeting model, an estimated $110 million impact to the business in 2022 alone.
 
 ## **2.5 Temporal Pitfalls**
 
-Staleness (data consumed after it has stopped reflecting reality), latency (correct data arriving too late to act on), out-of-order events, and silent backfills that change historical values after downstream consumers have already acted on the old ones. `[CITATION NEEDED]`
+Staleness — data consumed after it has stopped reflecting reality — and latency — correct data arriving too late to act on — are pitfalls of timing rather than content. Uber's own data engineering team describes the cost directly: without faster downstream transformation and access, "data remains stale at the point of decision," with business impact spanning experimentation, risk detection, personalization, and operational analytics; the team's move from batch to streaming processing cut latency from hours to minutes. Out-of-order events and silent backfills compound the problem — a backfill that changes historical values after downstream consumers have already acted on the old ones breaks the assumption that yesterday's numbers stay yesterday's numbers.
 
 ## **2.6 Governance & Accountability Pitfalls**
 
-No named data owner per dataset, no data-quality SLAs, no lineage showing what depends on what, tribal knowledge instead of documentation, and data quality treated as a one-time cleanup project rather than a continuous discipline. `[CITATION NEEDED — DAMA-DMBOK or similar standards-body framing]`
+None of the preceding five pitfalls is hard to detect with the right tooling. What is consistently missing is not detection capability but ownership: no named data owner per dataset, no data-quality SLA, no lineage showing what depends on what, tribal knowledge substituting for documentation, and data quality treated as a one-time cleanup project rather than a continuous discipline. This is well-trodden ground for the data-management profession — DAMA International's DMBOK2 names data quality management and organizational role expectations as separate, explicit knowledge areas, and ISO's 8000 series formalizes the same split into a process reference model (ISO 8000-61), governance (ISO 8000-51), and named roles and responsibilities (ISO 8000-150). Practitioners have reached the same conclusion independently of the standards bodies: GoCardless adopted data contracts specifically because undocumented upstream schema changes were degrading downstream ML-model data quality, and industry writing on the "rise of data contracts" frames the underlying problem as a lack of ownership rather than a lack of tooling — production databases treated as APIs nobody agreed to.
 
 | Pitfall Category | Where It Originates | Typical Symptom |
 | ----- | ----- | ----- |
@@ -74,7 +68,7 @@ No named data owner per dataset, no data-quality SLAs, no lineage showing what d
 
 # **3. The Proposed Framework: Data Quality as Infrastructure**
 
-*[Outline stage — this is the paper's proposed reference architecture. Needs outcome evidence before it leaves scaffold.]*
+The taxonomy above is a diagnosis. This section proposes a treatment: a reference architecture built from three components, made concrete by two further questions about when and how deeply to check, and rolled out in three implementation phases.
 
 ## **3.1 Overview**
 
@@ -84,49 +78,78 @@ Three components, addressing the six pitfall categories above as a system rather
 2. **Continuous observability and lineage** — automated monitoring for freshness, volume, schema, and distributional anomalies, plus traceability of what depends on what. Addresses temporal and statistical/distributional pitfalls, and makes governance gaps visible.
 3. **Named ownership and accountability** — every dataset has a named owner, a quality SLA, and an incident-response path, the same way production services have on-call ownership. Addresses governance pitfalls and gives the first two components someone to alert.
 
-## **3.2 Implementation and Methodology**
+## **3.2 Validation Checkpoints Across the Data Lifecycle**
 
-*[Revisit this three-phase table once the framework is validated against real sources.]*
+The three components in Section 3.1 describe what to build. Two further questions determine where a given check actually catches a failure: when in the data lifecycle it runs, and how deep it goes.
+
+### **3.2.1 When: Lifecycle Checkpoints**
+
+Any system that accepts, transforms, or emits data has three natural points to validate it, regardless of its architecture: before the data is accepted (**ingress**), while it is being transformed (**in-flight**), and before it is handed off to whatever consumes it (**egress**). This is an architectural property of data flow itself, not a property of any one technology — it applies equally to a synchronous request/response service, an asynchronous batch job, a streaming consumer, or a scheduled ETL run. Each checkpoint catches a different slice of the Section 2 taxonomy:
+
+| Checkpoint | What it protects against | Primarily catches |
+| :---- | :---- | :---- |
+| **Ingress (pre-validation)** | Malformed, incomplete, or unexpectedly-shaped data entering the system at all | Structural pitfalls (2.1), semantic pitfalls (2.2) |
+| **In-flight** | Corruption or drift introduced by the system's own transformation logic | Statistical and distributional pitfalls (2.4) |
+| **Egress (post-validation)** | Bad output reaching a downstream consumer before anyone notices | Temporal pitfalls (2.5), silent corruption introduced during processing |
+
+How each checkpoint is implemented varies by architecture — a synchronous request/response service validates at the boundary of a single call (request in, response out, with fewer internal stages to check in between); a distributed batch system like Apache Spark can declare constraints once and evaluate them as aggregation queries at every stage of a multi-step pipeline (Schelter et al., 2018); a streaming consumer validates against a schema registry as messages arrive. These are illustrations of the same three checkpoints, not an exhaustive list of where the model applies — the underlying principle is architecture-agnostic.
+
+### **3.2.2 How Deep: Verification Depth**
+
+Orthogonal to *when* a check runs is *how deep* it goes. Three depths, each answering a different question:
+
+| Depth | Question it answers | Outcome |
+| :---- | :---- | :---- |
+| **Syntactic** | Is the data well-formed? | Binary pass/fail |
+| **Internal consistency** | Does it agree with the rest of the organization's own data? | Binary pass/fail |
+| **External ground truth** | Does it agree with reality, per an authoritative outside source? | **Confidence score, not binary** |
+
+The third depth is qualitatively different from the first two, not just a stricter version of them: verifying an attribute against an authoritative external source produces a graded confidence level rather than a verdict. This is a general pattern, not one tied to any single attribute type — it applies wherever an organization holds a claim about the world (a person's address, a phone number's ownership, an email's deliverability, a bank account's ownership, a business's registration status, a document's authenticity) and wants to know how much to trust that claim rather than simply whether it's present. NIST formalizes this same graded-confidence pattern for identity proofing specifically (Identity Assurance Levels IAL1–IAL3, each requiring progressively more rigorous evidence and validation against authoritative sources rather than issuing a simple yes/no), and USPS CASS certification formalizes it for address-matching specifically (grading software against ZIP+4, delivery-point, and carrier-route accuracy rather than treating an address as simply valid or invalid). Both are cited here as concrete instances of the general pattern, not as the boundary of where it applies. A standards-body anchor for other attribute types — phone ownership, bank account ownership, business registration — has not been located yet and remains an open gap in this section's sourcing.
+
+External ground-truth verification introduces four consequences the first two depths don't have, and the framework needs an explicit answer for each:
+
+1. **A score needs a policy, not just a threshold.** A mid-range confidence score is neither a pass nor a fail — it needs a defined path (auto-accept above a threshold, auto-reject below another, route to human review in between), the same three-way accept/reject/review decision that probabilistic record linkage has used since Fellegi and Sunter formalized it in 1969.
+2. **Confidence decays.** A claim confirmed valid at one point in time (an address, a phone number, a business's registration status) may not stay valid — this is the Temporal pitfall (2.5) surfacing inside the framework itself, not a separate concern, and argues for periodic re-verification rather than a one-time check at intake.
+3. **It has a cost and a latency, so it forces a placement decision.** A synchronous call to an external verification service blocks the request it's protecting; an asynchronous, post-acceptance enrichment avoids that cost but means bad data is briefly live before it's flagged. Which one is appropriate depends on the cost of being briefly wrong versus the cost of the added latency.
+4. **It moves the trust boundary, it doesn't eliminate it.** A confidence score is only as reliable as the third party's own data quality — external verification substitutes a vendor's data-quality problem for the organization's own, rather than removing the dependency on someone else's data being correct. It also introduces a governance question the first two depths don't: sending PII to an external verification service is itself a data-handling decision (consent, data minimization, cross-border transfer) that belongs under the Governance pitfall (2.6), not treated as a purely technical integration detail.
+
+## **3.3 Implementation and Methodology**
+
+The three components and the checkpoint model translate into three implementation phases, following the same discipline organizations already apply to production-service reliability:
 
 | Stage | Description | Key Deliverable |
 | :---- | :---- | :---- |
 | Phase 1 — Baseline & Contract | Inventory critical datasets; establish quality baselines per pitfall category; define contracts between top producer/consumer pairs | Data inventory, quality baseline, first contracts in place |
-| Phase 2 — Instrument | Deploy observability/lineage tooling; wire contract violations and anomaly detection into alerting | Automated detection replacing manual discovery |
+| Phase 2 — Instrument | Deploy observability/lineage tooling; wire contract violations and anomaly detection into alerting; decide checkpoint placement and verification depth per dataset (Section 3.2) | Automated detection replacing manual discovery |
 | Phase 3 — Assign & Operate | Assign named owners and SLAs per dataset; establish incident response and postmortems for data-quality failures the way they exist for uptime | Ownership model in production, ongoing incident tracking |
 
-`[CITATION NEEDED — figure/chart placeholder once assets/ exists]`
+## **3.4 Benefits and Outcomes**
 
-## **3.3 Benefits and Outcomes**
-
-`[CITATION NEEDED — reported outcome figures: incident/MTTR reduction, reduced rework, model-performance stability, ROI]`
+Organizations that adopt comparable data-observability and contract practices report measurable gains. A 2025 Forrester Consulting Total Economic Impact study of a data-and-AI observability platform found 358% ROI over three years, driven by reclaimed data-personnel hours, avoided revenue loss from data downtime, and improved AI/ML model efficacy. The cost of not having this in place is equally measurable, and moving in the wrong direction: a 2023 industry survey of 200 data professionals found monthly data incidents rising from 59 to 67 year over year, average time-to-resolution rising 166% to 15 hours, and average revenue impacted by data downtime rising to 31%, with over half of respondents reporting a 25%-or-greater revenue impact.
 
 ---
 
 # **4. Cross-Industry Evidence**
 
-*[Outline stage. Vignettes are supporting evidence for the taxonomy/framework, not the spine of the argument — keep each one short. Candidates below need verification before being asserted as fact.]*
+The six pitfall categories and the framework proposed to address them are not specific to any one sector. Four brief vignettes illustrate the same underlying pattern surfacing under different names and different regulatory regimes.
 
-**Banking & Financial Services.** Verified anchor: OCC's $400M civil penalty against Citibank (Oct 2020) for data governance and risk-data-aggregation failures, plus a $135.6M follow-on fine (2024) for insufficient remediation. `[DRAFT PROSE NEEDED — source is verified, see research file Section 8]`
+**Banking & Financial Services.** In October 2020, the Office of the Comptroller of the Currency assessed a $400 million civil penalty against Citibank, N.A. for a "long-standing failure to establish effective risk management and data governance programs and internal controls," citing deficiencies specifically in data governance, risk data aggregation, and regulatory reporting. Citibank was fined an additional $135.6 million by the OCC and Federal Reserve in 2024 for insufficient progress remediating the same issues. The pattern is systemic rather than one bank's problem: a 2023 Basel Committee review of its own 2013 risk-data-aggregation principles (BCBS 239) found only 2 of 31 globally systemic banks fully compliant, a decade after the principles were published.
 
-**Healthcare.** Verified anchor: de Andrade et al. (2026), *Critical Care*, systematized review of EHR data-quality issues in critical care — missing-data rates over 80% for some ICU variables, 34% of ICU medication errors EHR-related, a sepsis-detection ML model's AUC dropping from 0.76–0.83 internally to 0.63 externally due to data-quality degradation. `[DRAFT PROSE NEEDED — source is verified, see research file Section 8]`
+**Healthcare.** A 2026 systematized review in *Critical Care* of 29 studies on electronic health record data quality in intensive care found missing-data rates exceeding 80% for some ICU variables and EHR-related medication errors accounting for 34% of all ICU medication errors, a third of them life-threatening. The same review found a sepsis-detection machine learning model's performance dropping from an internal AUC of 0.76–0.83 to 0.63 under external validation, attributed to data-quality degradation between the environment the model was trained in and the environment it was deployed to — the statistical/distributional pitfall (2.4) surfacing directly in patient-safety terms.
 
-**Retail / Technology — AI/ML pricing and targeting failures.** Verified case study: *Unity Technologies (2022)* — CEO John Riccitiello confirmed on an earnings call that ingesting bad training data from a large customer degraded its Audience Pinpointer ad-targeting model, with an estimated $110M 2022 business impact. `[DRAFT PROSE NEEDED — source is verified, see research file Section 4]`
+**Retail & Technology.** Unity Technologies' Q1 2022 earnings call is a clean, on-the-record instance of the same failure in an advertising-technology context: CEO John Riccitiello disclosed that the company had "lost the value of a portion of our data, training data due in part to us ingesting bad data from a large customer," with an estimated $110 million impact to the business in 2022.
 
-*Zillow Offers was considered and rejected as a candidate for this section — primary sources (Zillow's CEO, a Stanford GSB analysis, the AI Incident Database) attribute its 2021 shutdown to forecasting/strategic failure, not data quality. Do not reintroduce it here.*
-
-**Government & Public Sector.** Verified anchor: GAO-25-107469 (Sept 2025) — only 51% of 70 federal agencies completed required data-quality certifications for FY2023 procurement data; some agencies reran statistical samples until reaching a desired result rather than using valid random sampling. `[DRAFT PROSE NEEDED — source is verified, see research file Section 8]`
+**Government & Public Sector.** A September 2025 U.S. Government Accountability Office report found only 51% of 70 federal agencies had completed required data-quality certifications for fiscal year 2023 procurement data, that none of the 24 CFO Act agencies fully met their reporting obligations, and that some agencies reran statistical samples until reaching a desired result rather than using valid random sampling — a governance pitfall (2.6), not a technical one, playing out at national scale.
 
 ---
 
 # **5. Conclusion**
 
-*[Draft — revise once Sections 2–4 are sourced.]*
-
-Data-quality failures are usually treated as bad luck: a one-off bug, a rogue upstream change, a model that happened to degrade. Treated individually, each incident gets a fix and a postmortem, and the next one arrives from a different direction using the same underlying gap. The six-category taxonomy in this paper argues the opposite: the failure modes are finite, they recur predictably, and they are addressable as infrastructure — contracts at the boundary, continuous observability and lineage, and named ownership — rather than refought incident by incident.
+Data-quality failures are usually treated as bad luck: a one-off bug, a rogue upstream change, a model that happened to degrade. Treated individually, each incident gets a fix and a postmortem, and the next one arrives from a different direction using the same underlying gap. The six-category taxonomy above says the opposite is true: the failure modes are finite, they recur predictably, and they are addressable as infrastructure — contracts at the boundary, continuous observability and lineage, and named ownership — rather than refought incident by incident.
 
 **Future Outlook**
 
-`[Draft once framework outcomes are sourced. Candidate angle: as AI/ML systems become the primary consumer of enterprise data, the cost of the same six pitfalls compounds faster and more invisibly than it did for BI/reporting use cases — making data-quality infrastructure a precondition for reliable AI, not a parallel workstream.]`
+As AI and ML systems become the primary consumers of enterprise data, the same six pitfalls compound faster and more invisibly than they did for BI and reporting use cases: a degraded dashboard is visible to whoever looks at it, while a degraded model quietly ships worse decisions until someone notices the outcome rather than the cause. Standards bodies are already treating data quality as inseparable from AI risk rather than a separate workstream — NIST's AI Risk Management Framework threads data lineage, representativeness, and drift through its core risk-management functions rather than isolating them in a single section. Organizations that build data-quality infrastructure as a precondition for AI, rather than a parallel initiative, will be the ones whose AI systems are trustworthy enough to put in front of a regulator, a customer, or a patient.
 
 ---
 
@@ -143,16 +166,40 @@ For questions or to discuss further, please reach out via the contact details as
 
 # **Sources**
 
-*[Empty — populate from the research file as claims are sourced. Three-tier structure: Primary & Regulatory/Standards, Academic & Peer-Reviewed Literature, Industry Research & Vendor Sources.]*
+Organized into three tiers by evidentiary weight: primary, regulatory, and standards sources; peer-reviewed academic literature; and industry research or vendor publications. The tiering is meant to make sourcing quality visible rather than to imply lower tiers are unreliable — see the note at the end of this section.
 
-**Primary & Regulatory / Standards Sources**
+**Primary, Regulatory & Standards Sources**
 
-*(none yet)*
+1. Office of the Comptroller of the Currency (2020). *OCC assesses $400 million civil money penalty against Citibank.* https://www.occ.gov/news-issuances/news-releases/2020/nr-occ-2020-132.html
+2. Banking Dive (2024). *Citi hit with $135.6M fine over risk management, data governance shortfalls.* https://www.bankingdive.com/news/citi-risk-management-data-governance-OCC-fed/586642/
+3. Basel Committee on Banking Supervision (2013). *Principles for effective risk data aggregation and risk reporting (BCBS 239).* https://www.bis.org/publ/bcbs239.pdf
+4. U.S. Government Accountability Office (2025). *Federal Spending Transparency: Actions Needed to Help Ensure Procurement Data Quality.* GAO-25-107469. https://www.gao.gov/products/gao-25-107469
+5. Unity Software Inc. (2022). *Q1 2022 Earnings Call Transcript*, May 11, 2022 (The Motley Fool). https://www.fool.com/earnings/call-transcripts/2022/05/11/unity-software-inc-u-q1-2022-earnings-call-transcr/
+6. National Institute of Standards and Technology (2023). *AI Risk Management Framework (AI RMF 1.0).* https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-ai-rmf-10
+7. National Institute of Standards and Technology (2025). *SP 800-63A, Digital Identity Guidelines — Enrollment and Identity Proofing.* https://pages.nist.gov/800-63-4/sp800-63a.html
+8. International Organization for Standardization (2016). *ISO 8000-61:2016 — Data quality — Part 61: Data quality management: Process reference model.* https://www.iso.org/standard/63086.html
+9. International Organization for Standardization (2022). *ISO 8000-150:2022 — Data quality — Part 150: Data quality management: Roles and responsibilities.* https://www.iso.org/standard/80753.html
+10. International Organization for Standardization (2023). *ISO 8000-51:2023 — Data quality — Part 51: Data governance.* https://www.iso.org/standard/78708.html
+11. U.S. Postal Service (2025). *CASS™ (Coding Accuracy Support System) certification.* https://postalpro.usps.com/certifications/cass
 
 **Academic & Peer-Reviewed Literature**
 
-*(none yet — Sambasivan et al. 2021 is the leading candidate, pending verification)*
+12. Fellegi, I.P. & Sunter, A.B. (1969). *A Theory for Record Linkage.* Journal of the American Statistical Association, 64(328), 1183–1210. https://doi.org/10.1080/01621459.1969.10501049
+13. Sculley, D., Holt, G., Golovin, D., Davydov, E., Phillips, T., Ebner, D., Chaudhary, V., Young, M., Crespo, J-F., & Dennison, D. (2015). *Hidden Technical Debt in Machine Learning Systems.* NeurIPS 2015. https://papers.nips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems
+14. Schelter, S., Lange, D., Schmidt, P., Celikel, M., Grafberger, A., & Biessmann, F. (2018). *Automating Large-Scale Data Quality Verification.* Proceedings of the VLDB Endowment, 11(12). https://www.vldb.org/pvldb/vol11/p1781-schelter.pdf
+15. Sambasivan, N., Kapania, S., Highfill, H., Akrong, D., Paritosh, P., & Aroyo, L.M. (2021). *"Everyone wants to do the model work, not the data work": Data Cascades in High-Stakes AI.* CHI '21. https://doi.org/10.1145/3411764.3445518
+16. BMJ Quality & Safety (2025). *Double trouble: a propensity-matched cohort study evaluating the associations between duplicate medical records and patient outcomes.* https://doi.org/10.1136/bmjqs-2025-019112
+17. de Andrade, J.B.C. et al. (2026). *Discovery of data quality issues in electronic health records: profound consequences for critical care medicine applications — a systematized review.* Critical Care, 30:19. https://doi.org/10.1186/s13054-025-05677-0
 
 **Industry Research & Vendor Sources**
 
-*(none yet)*
+18. Redman, T.C. (2016). *Bad Data Costs the U.S. $3 Trillion Per Year.* Harvard Business Review. https://hbr.org/2016/09/bad-data-costs-the-u-s-3-trillion-per-year
+19. Dataversity (2020). *Putting a Number on Bad Data* (discussing Gartner's 2020 Magic Quadrant for Data Quality Solutions). https://www.dataversity.net/articles/putting-a-number-on-bad-data/
+20. DAMA International (2017/2024). *DAMA-DMBOK2: Guide to the Data Management Body of Knowledge*, 2nd Edition. Technics Publications. https://technicspub.com/dmbok2/
+21. Sanderson, C. (2022). *The Rise of Data Contracts — And Why Your Data Pipelines Don't Scale.* https://dataproducts.substack.com/p/the-rise-of-data-contracts
+22. Jones, A. (2021). *Improving Data Quality with Data Contracts*, GoCardless Tech blog. https://medium.com/gocardless-tech/improving-data-quality-with-data-contracts-238041e35698
+23. dbt Labs. *How the dbt Semantic Layer Works.* https://www.getdbt.com/blog/how-the-dbt-semantic-layer-works
+24. Forrester Consulting / Monte Carlo Data (2025). *The Total Economic Impact™ of Monte Carlo's Data + AI Observability Platform.* https://tei.forrester.com/go/montecarlo/dataaiobservabilityplatform
+25. Monte Carlo Data / Wakefield Research (2023). *The State of Data Quality, 2023.* https://montecarlo.ai/state-of-data-quality/
+
+*Note: sources 18–25 are industry, vendor, or vendor-commissioned publications rather than peer-reviewed research or primary regulatory documents; figures from that tier are presented as commonly cited industry estimates, not independently audited data. Two of them (24 and 25, both Monte Carlo–affiliated) are flagged specifically because Monte Carlo is a data-observability vendor with a direct commercial interest in the framework this paper proposes — the underlying methodology (Forrester's TEI framework for #24, a fielded 200-respondent survey for #25) is disclosed, but neither is an independently audited study. Where possible, primary regulatory and standards sources (OCC, GAO, NIST, ISO, USPS) and peer-reviewed academic literature (sources 12–17) are cited directly and prioritized.*

@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1000" height="520" fill="#fcfcfb"/>
+
+  <text x="500" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#0b0b0b">Reference Architecture: Data Quality as Infrastructure</text>
+  <text x="500" y="50" text-anchor="middle" font-size="12" fill="#52514e">Three components acting continuously on data as it flows, not three independent checklists</text>
+
+  <!-- feedback loop arc: ownership closes the loop back to the boundary -->
+  <path d="M 735 205 C 735 92, 225 92, 225 205" fill="none" stroke="#52514e" stroke-width="1.5" stroke-dasharray="5,4"/>
+  <polygon points="225,205 219,190 231,190" fill="#52514e"/>
+  <text x="480" y="88" text-anchor="middle" font-size="12" fill="#52514e">closes the loop: alerts trigger fixes upstream</text>
+
+  <!-- pipe: the data flow channel -->
+  <rect x="140" y="228" width="660" height="36" fill="#e1e0d9"/>
+
+  <!-- input -->
+  <rect x="20" y="222" width="110" height="60" rx="6" fill="#fcfcfb" stroke="#898781" stroke-width="1.5"/>
+  <text x="75" y="248" text-anchor="middle" font-size="12" fill="#52514e">Fragmented,</text>
+  <text x="75" y="266" text-anchor="middle" font-size="12" fill="#52514e">inconsistent data</text>
+  <polygon points="130,238 130,254 140,246" fill="#898781"/>
+
+  <!-- gate 1: contracts -->
+  <rect x="220" y="212" width="10" height="76" fill="#2a78d6"/>
+  <text x="225" y="168" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0b0b">1 &#183; Contracts at</text>
+  <text x="225" y="184" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0b0b">the Boundary</text>
+  <text x="225" y="322" text-anchor="middle" font-size="12" fill="#52514e">schema + semantic</text>
+  <text x="225" y="338" text-anchor="middle" font-size="12" fill="#52514e">checked before entry</text>
+
+  <!-- observability band: continuous overlay across the flow -->
+  <rect x="340" y="200" width="300" height="100" rx="10" fill="#eb6834" fill-opacity="0.12" stroke="#eb6834" stroke-width="1.5" stroke-dasharray="5,4"/>
+  <ellipse cx="490" cy="246" rx="20" ry="11" fill="none" stroke="#eb6834" stroke-width="2"/>
+  <circle cx="490" cy="246" r="5" fill="#eb6834"/>
+  <text x="490" y="168" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0b0b">2 &#183; Continuous Observability</text>
+  <text x="490" y="184" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0b0b">&amp; Lineage</text>
+  <text x="490" y="322" text-anchor="middle" font-size="12" fill="#52514e">freshness, volume, schema,</text>
+  <text x="490" y="338" text-anchor="middle" font-size="12" fill="#52514e">and drift watched end to end</text>
+
+  <!-- arrow: observability alerts ownership -->
+  <line x1="635" y1="256" x2="722" y2="290" stroke="#52514e" stroke-width="1.5"/>
+  <polygon points="722,290 707,289 712,277" fill="#52514e"/>
+  <text x="660" y="300" text-anchor="middle" font-size="11" fill="#898781">alerts</text>
+
+  <!-- gate 3: ownership -->
+  <rect x="730" y="212" width="10" height="76" fill="#1baf7a"/>
+  <text x="735" y="168" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0b0b">3 &#183; Named Ownership</text>
+  <text x="735" y="184" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0b0b">&amp; Accountability</text>
+  <text x="735" y="322" text-anchor="middle" font-size="12" fill="#52514e">named owner, SLA,</text>
+  <text x="735" y="338" text-anchor="middle" font-size="12" fill="#52514e">incident response</text>
+
+  <!-- output -->
+  <polygon points="800,238 800,254 810,246" fill="#0b0b0b"/>
+  <rect x="820" y="205" width="150" height="100" rx="6" fill="#fcfcfb" stroke="#0b0b0b" stroke-width="2"/>
+  <text x="895" y="245" text-anchor="middle" font-size="14" font-weight="700" fill="#0b0b0b">Trustworthy</text>
+  <text x="895" y="265" text-anchor="middle" font-size="14" font-weight="700" fill="#0b0b0b">data at the</text>
+  <text x="895" y="285" text-anchor="middle" font-size="14" font-weight="700" fill="#0b0b0b">point of use</text>
+
+  <!-- roadmap strip -->
+  <line x1="20" y1="375" x2="980" y2="375" stroke="#e1e0d9" stroke-width="1.5"/>
+  <text x="500" y="400" text-anchor="middle" font-size="14" font-weight="700" fill="#0b0b0b">Implementation Roadmap (Section 3.3)</text>
+
+  <rect x="60" y="418" width="270" height="86" rx="8" fill="#fcfcfb" stroke="#e1e0d9" stroke-width="1.5"/>
+  <rect x="60" y="418" width="270" height="6" fill="#2a78d6"/>
+  <text x="195" y="446" text-anchor="middle" font-size="12" font-weight="700" fill="#52514e">PHASE 1 &#8212; BASELINE &amp; CONTRACT</text>
+  <text x="195" y="468" text-anchor="middle" font-size="12" fill="#0b0b0b">Inventory datasets,</text>
+  <text x="195" y="486" text-anchor="middle" font-size="12" fill="#0b0b0b">define producer/consumer contracts</text>
+
+  <polygon points="335,450 350,461 335,472" fill="#898781"/>
+
+  <rect x="365" y="418" width="270" height="86" rx="8" fill="#fcfcfb" stroke="#e1e0d9" stroke-width="1.5"/>
+  <rect x="365" y="418" width="270" height="6" fill="#eb6834"/>
+  <text x="500" y="446" text-anchor="middle" font-size="12" font-weight="700" fill="#52514e">PHASE 2 &#8212; INSTRUMENT</text>
+  <text x="500" y="468" text-anchor="middle" font-size="12" fill="#0b0b0b">Deploy observability/lineage,</text>
+  <text x="500" y="486" text-anchor="middle" font-size="12" fill="#0b0b0b">wire violations into alerting</text>
+
+  <polygon points="640,450 655,461 640,472" fill="#898781"/>
+
+  <rect x="670" y="418" width="270" height="86" rx="8" fill="#fcfcfb" stroke="#e1e0d9" stroke-width="1.5"/>
+  <rect x="670" y="418" width="270" height="6" fill="#1baf7a"/>
+  <text x="805" y="446" text-anchor="middle" font-size="12" font-weight="700" fill="#52514e">PHASE 3 &#8212; ASSIGN &amp; OPERATE</text>
+  <text x="805" y="468" text-anchor="middle" font-size="12" fill="#0b0b0b">Name owners and SLAs,</text>
+  <text x="805" y="486" text-anchor="middle" font-size="12" fill="#0b0b0b">run incident response</text>
+</svg>

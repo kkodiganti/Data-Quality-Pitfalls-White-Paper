@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="900" height="470" fill="#fcfcfb"/>
+
+  <text x="450" y="38" text-anchor="middle" font-size="21" font-weight="700" fill="#0b0b0b">Data Quality Failures Are Not Sector-Specific</text>
+  <text x="450" y="60" text-anchor="middle" font-size="13" fill="#52514e">Selected findings from Section 4, one per industry</text>
+
+  <!-- Card 1: Banking -->
+  <rect x="40" y="90" width="400" height="170" rx="8" fill="#fcfcfb" stroke="#e1e0d9" stroke-width="1.5"/>
+  <rect x="40" y="90" width="400" height="6" rx="3" fill="#2a78d6"/>
+  <text x="64" y="124" font-size="13" font-weight="700" fill="#52514e">BANKING &amp; FINANCIAL SERVICES</text>
+  <text x="64" y="176" font-size="44" font-weight="800" fill="#0b0b0b">$535.6M</text>
+  <text x="64" y="202" font-size="13" fill="#52514e">in OCC/Fed data-governance penalties</text>
+  <text x="64" y="220" font-size="13" fill="#52514e">against a single bank, 2020 and 2024</text>
+  <text x="64" y="244" font-size="11" fill="#898781">Citibank, N.A. — OCC / Federal Reserve</text>
+
+  <!-- Card 2: Healthcare -->
+  <rect x="460" y="90" width="400" height="170" rx="8" fill="#fcfcfb" stroke="#e1e0d9" stroke-width="1.5"/>
+  <rect x="460" y="90" width="400" height="6" rx="3" fill="#eb6834"/>
+  <text x="484" y="124" font-size="13" font-weight="700" fill="#52514e">HEALTHCARE</text>
+  <text x="484" y="176" font-size="44" font-weight="800" fill="#0b0b0b">80%+</text>
+  <text x="484" y="202" font-size="13" fill="#52514e">missing-data rate for some ICU</text>
+  <text x="484" y="220" font-size="13" fill="#52514e">variables in electronic health records</text>
+  <text x="484" y="244" font-size="11" fill="#898781">Critical Care systematized review, 2026</text>
+
+  <!-- Card 3: Government -->
+  <rect x="40" y="280" width="400" height="170" rx="8" fill="#fcfcfb" stroke="#e1e0d9" stroke-width="1.5"/>
+  <rect x="40" y="280" width="400" height="6" rx="3" fill="#1baf7a"/>
+  <text x="64" y="314" font-size="13" font-weight="700" fill="#52514e">GOVERNMENT &amp; PUBLIC SECTOR</text>
+  <text x="64" y="366" font-size="44" font-weight="800" fill="#0b0b0b">51%</text>
+  <text x="64" y="392" font-size="13" fill="#52514e">of federal agencies completed required</text>
+  <text x="64" y="410" font-size="13" fill="#52514e">procurement data-quality certifications</text>
+  <text x="64" y="434" font-size="11" fill="#898781">U.S. GAO-25-107469, 2025</text>
+
+  <!-- Card 4: Retail & Technology -->
+  <rect x="460" y="280" width="400" height="170" rx="8" fill="#fcfcfb" stroke="#e1e0d9" stroke-width="1.5"/>
+  <rect x="460" y="280" width="400" height="6" rx="3" fill="#2a78d6"/>
+  <text x="484" y="314" font-size="13" font-weight="700" fill="#52514e">RETAIL &amp; TECHNOLOGY</text>
+  <text x="484" y="366" font-size="44" font-weight="800" fill="#0b0b0b">$110M</text>
+  <text x="484" y="392" font-size="13" fill="#52514e">estimated 2022 business impact from</text>
+  <text x="484" y="410" font-size="13" fill="#52514e">ingesting bad ML training data</text>
+  <text x="484" y="434" font-size="11" fill="#898781">Unity Technologies, Q1 2022 earnings call</text>
+</svg>

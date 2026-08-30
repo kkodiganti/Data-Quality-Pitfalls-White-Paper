@@ -47,6 +47,10 @@ Fragmented or duplicate records for the same real-world entity are a special cas
 
 Machine learning systems add a category of pitfall that traditional reporting pipelines don't have: statistical drift between the data a model was trained on and the data it now serves in production, label noise, sampling bias, and feedback loops where a model's own outputs pollute the data used to retrain it. Sambasivan et al. (2021) interviewed 53 AI practitioners across India, East and West Africa, and the United States. 92% had experienced at least one "data cascade," a compounding downstream failure traced back to an upstream data issue, and 45% had experienced multiple cascades. Their central finding: data work is structurally undervalued relative to model work, and that undervaluing is the root cause. Sculley et al. (2015) name the specific mechanisms: entanglement, where changing any one input feature changes the behavior of others ("changing anything changes everything"), hidden feedback loops, and undeclared consumers. Data dependencies in ML systems, they argue, are as costly as code dependencies and far harder to detect. Unity Technologies put a dollar figure on the pattern: on its Q1 2022 earnings call, the company disclosed that ingesting bad training data from a large customer had degraded its Audience Pinpointer ad-targeting model, an estimated $110 million impact to the business in 2022 alone.
 
+![Two stats from a 2021 survey of 53 AI practitioners: 92 percent experienced at least one data cascade, a compounding downstream failure traced to an upstream data issue, and 45 percent experienced multiple cascades](assets/chart-ml-data-cascades.svg)
+
+*Figure 1. Data cascades reported by AI practitioners (Sambasivan et al., CHI 2021).*
+
 ## **2.5 Temporal Pitfalls**
 
 Staleness and latency are pitfalls of timing, not content. Staleness means data is consumed after it has stopped reflecting reality; latency means correct data arrives too late to act on. Uber's own data engineering team describes the cost directly: without faster downstream transformation and access, "data remains stale at the point of decision," with business impact spanning experimentation, risk detection, personalization, and operational analytics. Moving from batch to streaming processing cut their latency from hours to minutes. Out-of-order events and silent backfills compound the problem. A backfill that changes historical values after downstream consumers have already acted on the old ones breaks a basic assumption: that yesterday's numbers stay yesterday's numbers.
@@ -78,6 +82,10 @@ Three components address the six pitfall categories above as a system, not one i
 2. **Continuous observability and lineage** — automated monitoring for freshness, volume, schema, and distributional anomalies, plus traceability of what depends on what. Addresses temporal and statistical/distributional pitfalls, and makes governance gaps visible.
 3. **Named ownership and accountability** — every dataset has a named owner, a quality SLA, and an incident-response path, the same way production services have on-call ownership. Addresses governance pitfalls and gives the first two components someone to alert.
 
+![Reference architecture: fragmented data flows through a contracts gate at the boundary, a continuous observability and lineage layer that watches the whole flow and alerts an owner, and a feedback loop where the owner's fixes reach back upstream, producing trustworthy data at the point of use; a three-phase roadmap below runs baseline and contract, instrument, and assign and operate](assets/chart-reference-architecture.svg)
+
+*Figure 2. Reference architecture and implementation roadmap for data quality as infrastructure.*
+
 ## **3.2 Validation Checkpoints Across the Data Lifecycle**
 
 The three components in Section 3.1 describe what to build. Two further questions determine where a given check actually catches a failure: when in the data lifecycle it runs, and how deep it goes.
@@ -93,6 +101,10 @@ Any system that accepts, transforms, or emits data has three natural points to v
 | **Egress (post-validation)** | Bad output reaching a downstream consumer before anyone notices | Temporal pitfalls (2.5), silent corruption introduced during processing |
 
 How each checkpoint gets implemented varies by architecture. A synchronous request/response service validates at the boundary of a single call: request in, response out, with fewer internal stages to check in between. A distributed batch system like Apache Spark can declare constraints once and evaluate them as aggregation queries at every stage of a multi-step pipeline (Schelter et al., 2018). A streaming consumer validates against a schema registry as messages arrive. These three examples illustrate the same checkpoints; they don't mark the boundary of where the model applies, since the underlying principle is architecture-agnostic.
+
+![The same three checkpoints, ingress, in-flight, and egress, implemented across three architectures: synchronous request/response validates request and response schemas at its two boundaries; batch or distributed systems like Apache Spark run pre-flight checks, in-flight aggregation-query constraints, and output reconciliation; streaming consumers validate against a schema registry, run stateful in-flight checks, and defer to the downstream consumer's own contract at egress](assets/chart-lifecycle-checkpoints.svg)
+
+*Figure 3. Validation checkpoints implemented across three illustrative architectures.*
 
 ### **3.2.2 How Deep: Verification Depth**
 
@@ -113,6 +125,10 @@ External ground-truth verification introduces four consequences the first two de
 3. **It has a cost and a latency, so it forces a placement decision.** A synchronous call to an external verification service blocks the request it's protecting; an asynchronous, post-acceptance enrichment avoids that cost but means bad data is briefly live before it's flagged. Which one is appropriate depends on the cost of being briefly wrong versus the cost of the added latency.
 4. **It moves the trust boundary; it doesn't eliminate it.** A confidence score is only as reliable as the third party's own data quality, so external verification trades a vendor's data-quality problem for the organization's own instead of removing the dependency. It also raises a governance question the first two depths don't: sending PII to an external verification service is a data-handling decision (consent, data minimization, cross-border transfer) that belongs under the Governance pitfall (2.6), not a purely technical integration detail.
 
+![Three verification depths from syntactic to internal consistency to external ground truth, where only external ground truth produces a confidence score instead of a binary pass or fail; the score then feeds a three-zone decision scale from low to high confidence, routing to auto-reject below threshold, human review in the mid-range, or auto-accept above threshold](assets/chart-verification-depth.svg)
+
+*Figure 4. Verification depth and the confidence-score decision path.*
+
 ## **3.3 Implementation and Methodology**
 
 The three components and the checkpoint model translate into three implementation phases, following the same discipline organizations already apply to production-service reliability:
@@ -127,11 +143,19 @@ The three components and the checkpoint model translate into three implementatio
 
 Organizations that adopt comparable data-observability and contract practices report measurable gains. A 2025 Forrester Consulting Total Economic Impact study of a data-and-AI observability platform found 358% ROI over three years, driven by reclaimed data-personnel hours, avoided revenue loss from data downtime, and improved AI/ML model efficacy. The cost of skipping this is equally measurable, and it's heading in the wrong direction: a 2023 industry survey of 200 data professionals found monthly data incidents rising from 59 to 67 year over year, average time-to-resolution up 166% to 15 hours, and average revenue impacted by data downtime up to 31%, with over half of respondents reporting a 25%-or-greater hit.
 
+![Reported outcomes: organizations adopting comparable data-observability practices report 358 percent three-year ROI, while organizations without such practices report a worsening trend from 2022 to 2023, monthly data incidents up from 59 to 67, average time to resolve up 166 percent to 15 hours, and revenue impacted by data downtime up from 26 to 31 percent](assets/chart-outcomes-roi-vs-incidents.svg)
+
+*Figure 5. Reported outcomes: adopting data-observability practices vs. business as usual.*
+
 ---
 
 # **4. Cross-Industry Evidence**
 
 The six pitfall categories, and the framework proposed to address them, apply beyond any single sector. Four brief vignettes show the same underlying pattern surfacing under different names and different regulatory regimes.
+
+![Four cross-industry findings: banking, 535.6 million dollars in OCC and Federal Reserve data-governance penalties against one bank; healthcare, over 80 percent missing-data rate for some ICU variables; government, only 51 percent of federal agencies met required procurement data-quality certifications; retail and technology, 110 million dollar estimated business impact from ingesting bad ML training data](assets/chart-cross-industry-vignettes.svg)
+
+*Figure 6. Selected cross-industry data-quality findings, one per sector.*
 
 **Banking & Financial Services.** In October 2020, the Office of the Comptroller of the Currency assessed a $400 million civil penalty against Citibank, N.A. for a "long-standing failure to establish effective risk management and data governance programs and internal controls," citing deficiencies specifically in data governance, risk data aggregation, and regulatory reporting. Citibank was fined an additional $135.6 million by the OCC and Federal Reserve in 2024 for insufficient progress remediating the same issues. The pattern isn't confined to one bank: a 2023 Basel Committee review of its own 2013 risk-data-aggregation principles (BCBS 239) found only 2 of 31 globally systemic banks fully compliant, a decade after the principles were published.
 

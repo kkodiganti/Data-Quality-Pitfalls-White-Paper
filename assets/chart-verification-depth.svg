@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="900" height="500" fill="#fcfcfb"/>
+
+  <text x="450" y="26" text-anchor="middle" font-size="20" font-weight="700" fill="#0b0b0b">How Deep to Verify: From Syntax to Ground Truth</text>
+  <text x="450" y="46" text-anchor="middle" font-size="12" fill="#52514e">Only external ground-truth verification produces a graded score instead of a verdict (Section 3.2.2)</text>
+
+  <!-- Level 1: syntactic -->
+  <rect x="100" y="70" width="700" height="54" rx="8" fill="#fcfcfb" stroke="#2a78d6" stroke-width="2"/>
+  <text x="124" y="92" font-size="14" font-weight="700" fill="#0b0b0b">SYNTACTIC</text>
+  <text x="124" y="112" font-size="13" fill="#52514e">Is the data well-formed?</text>
+  <rect x="650" y="84" width="130" height="24" rx="12" fill="none" stroke="#2a78d6" stroke-width="1.5"/>
+  <text x="715" y="100" text-anchor="middle" font-size="11" fill="#52514e">Binary pass/fail</text>
+
+  <polygon points="440,128 460,128 450,144" fill="#898781"/>
+
+  <!-- Level 2: internal consistency -->
+  <rect x="100" y="150" width="700" height="54" rx="8" fill="#fcfcfb" stroke="#eb6834" stroke-width="2"/>
+  <text x="124" y="172" font-size="14" font-weight="700" fill="#0b0b0b">INTERNAL CONSISTENCY</text>
+  <text x="124" y="192" font-size="13" fill="#52514e">Does it agree with our own data?</text>
+  <rect x="650" y="164" width="130" height="24" rx="12" fill="none" stroke="#eb6834" stroke-width="1.5"/>
+  <text x="715" y="180" text-anchor="middle" font-size="11" fill="#52514e">Binary pass/fail</text>
+
+  <polygon points="440,208 460,208 450,224" fill="#898781"/>
+
+  <!-- Level 3: external ground truth -->
+  <rect x="100" y="230" width="700" height="58" rx="8" fill="#fcfcfb" stroke="#1baf7a" stroke-width="2.5"/>
+  <text x="124" y="253" font-size="14" font-weight="700" fill="#0b0b0b">EXTERNAL GROUND TRUTH</text>
+  <text x="124" y="274" font-size="13" fill="#52514e">Does it agree with reality?</text>
+  <rect x="600" y="246" width="180" height="26" rx="13" fill="none" stroke="#1baf7a" stroke-width="1.5"/>
+  <text x="690" y="263" text-anchor="middle" font-size="11" font-weight="700" fill="#0b0b0b">Confidence score, not binary</text>
+
+  <line x1="450" y1="288" x2="450" y2="316" stroke="#52514e" stroke-width="1.5"/>
+  <polygon points="450,316 444,304 456,304" fill="#52514e"/>
+  <text x="465" y="306" font-size="12" fill="#52514e">the score becomes a decision</text>
+
+  <!-- confidence scale with three decision zones -->
+  <line x1="160" y1="386" x2="740" y2="386" stroke="#898781" stroke-width="1"/>
+  <polygon points="740,386 731,381 731,391" fill="#898781"/>
+  <text x="160" y="400" font-size="11" fill="#898781">low confidence</text>
+  <text x="740" y="400" text-anchor="end" font-size="11" fill="#898781">high confidence</text>
+
+  <rect x="160" y="330" width="188" height="38" rx="6" fill="#2a78d6" fill-opacity="0.15" stroke="#2a78d6" stroke-width="1.5"/>
+  <rect x="354" y="330" width="188" height="38" rx="6" fill="#eb6834" fill-opacity="0.15" stroke="#eb6834" stroke-width="1.5"/>
+  <rect x="548" y="330" width="192" height="38" rx="6" fill="#1baf7a" fill-opacity="0.15" stroke="#1baf7a" stroke-width="1.5"/>
+
+  <text x="254" y="440" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0b0b">AUTO-REJECT</text>
+  <text x="254" y="458" text-anchor="middle" font-size="11" fill="#52514e">below threshold</text>
+
+  <text x="448" y="440" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0b0b">HUMAN REVIEW</text>
+  <text x="448" y="458" text-anchor="middle" font-size="11" fill="#52514e">mid-range score</text>
+
+  <text x="644" y="440" text-anchor="middle" font-size="13" font-weight="700" fill="#0b0b0b">AUTO-ACCEPT</text>
+  <text x="644" y="458" text-anchor="middle" font-size="11" fill="#52514e">above threshold</text>
+
+  <text x="450" y="486" text-anchor="middle" font-size="11" fill="#898781">The same three-way accept/reject/review decision used in probabilistic record linkage since Fellegi &amp; Sunter, 1969</text>
+</svg>

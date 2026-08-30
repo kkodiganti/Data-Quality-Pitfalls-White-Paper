@@ -30,12 +30,12 @@
   <text x="292" y="177" text-anchor="middle" font-size="12" fill="#0b0b0b">Validate request schema,</text>
   <text x="292" y="195" text-anchor="middle" font-size="12" fill="#0b0b0b">type, and business rules</text>
 
-  <polygon points="415,183 428,177 428,189" fill="#898781"/>
+  <polygon points="415,177 415,189 428,183" fill="#898781"/>
   <rect x="435" y="152" width="200" height="62" rx="6" fill="#fcfcfb" stroke="#e1e0d9" stroke-width="1.5" stroke-dasharray="4,3"/>
   <text x="535" y="177" text-anchor="middle" font-size="12" fill="#898781">Fewer internal stages</text>
   <text x="535" y="195" text-anchor="middle" font-size="12" fill="#898781">to check in between</text>
 
-  <polygon points="640,183 653,177 653,189" fill="#898781"/>
+  <polygon points="640,177 640,189 653,183" fill="#898781"/>
   <rect x="660" y="152" width="235" height="62" rx="6" fill="#fcfcfb" stroke="#1baf7a" stroke-width="1.5"/>
   <text x="777" y="177" text-anchor="middle" font-size="12" fill="#0b0b0b">Validate response schema</text>
   <text x="777" y="195" text-anchor="middle" font-size="12" fill="#0b0b0b">and contract before reply</text>
@@ -50,12 +50,12 @@
   <text x="292" y="271" text-anchor="middle" font-size="12" fill="#0b0b0b">Pre-flight: expected schema,</text>
   <text x="292" y="289" text-anchor="middle" font-size="12" fill="#0b0b0b">completeness, volume vs. baseline</text>
 
-  <polygon points="415,280 428,274 428,286" fill="#898781"/>
+  <polygon points="415,274 415,286 428,280" fill="#898781"/>
   <rect x="435" y="249" width="200" height="62" rx="6" fill="#fcfcfb" stroke="#eb6834" stroke-width="1.5"/>
   <text x="535" y="271" text-anchor="middle" font-size="12" fill="#0b0b0b">Constraints as Spark</text>
   <text x="535" y="289" text-anchor="middle" font-size="12" fill="#0b0b0b">aggregation queries</text>
 
-  <polygon points="640,280 653,274 653,286" fill="#898781"/>
+  <polygon points="640,274 640,286 653,280" fill="#898781"/>
   <rect x="660" y="249" width="235" height="62" rx="6" fill="#fcfcfb" stroke="#1baf7a" stroke-width="1.5"/>
   <text x="777" y="271" text-anchor="middle" font-size="12" fill="#0b0b0b">Reconciliation: row counts,</text>
   <text x="777" y="289" text-anchor="middle" font-size="12" fill="#0b0b0b">checksums, output bounds</text>
@@ -70,12 +70,12 @@
   <text x="292" y="368" text-anchor="middle" font-size="12" fill="#0b0b0b">Validate against a schema</text>
   <text x="292" y="386" text-anchor="middle" font-size="12" fill="#0b0b0b">registry as messages arrive</text>
 
-  <polygon points="415,377 428,371 428,383" fill="#898781"/>
+  <polygon points="415,371 415,383 428,377" fill="#898781"/>
   <rect x="435" y="346" width="200" height="62" rx="6" fill="#fcfcfb" stroke="#eb6834" stroke-width="1.5"/>
   <text x="535" y="368" text-anchor="middle" font-size="12" fill="#0b0b0b">Stateful checks</text>
   <text x="535" y="386" text-anchor="middle" font-size="12" fill="#0b0b0b">across the stream</text>
 
-  <polygon points="640,377 653,371 653,383" fill="#898781"/>
+  <polygon points="640,371 640,383 653,377" fill="#898781"/>
   <rect x="660" y="346" width="235" height="62" rx="6" fill="#fcfcfb" stroke="#1baf7a" stroke-width="1.5"/>
   <text x="777" y="368" text-anchor="middle" font-size="12" fill="#0b0b0b">Downstream consumer's</text>
   <text x="777" y="386" text-anchor="middle" font-size="12" fill="#0b0b0b">own contract applies</text>

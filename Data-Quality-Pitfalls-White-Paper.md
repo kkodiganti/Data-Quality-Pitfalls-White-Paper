@@ -1,9 +1,6 @@
 # **Data Quality Pitfalls: From Recurring Failure Modes to a Cross-Industry Prevention Framework**
 
-**Krishna Murthy Kodiganti**
-*Senior Lead Software Engineer, Capital One*
-
-*The views expressed in this paper are the author's own and do not represent the views of Capital One.*
+*Krishna Murthy Kodiganti, Fellow IETE, Fellow IAENG, Fellow SCRS, Senior Member IEEE, Member ACM*
 
 ---
 
@@ -180,11 +177,9 @@ As AI and ML systems become the primary consumers of enterprise data, the same s
 # **Contact Information**
 
 **Krishna Murthy Kodiganti**
-Senior Lead Software Engineer, Capital One
+Fellow IETE, Fellow IAENG, Fellow SCRS, Senior Member IEEE, Member ACM
 
 For questions or to discuss further, please reach out via the contact details associated with this publication.
-
-*The views expressed in this paper are the author's own and do not represent the views of Capital One.*
 
 ---
 

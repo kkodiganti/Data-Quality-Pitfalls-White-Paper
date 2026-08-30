@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository purpose
 
-This is a content repository, not a software project — there is no build, lint, or test tooling. It holds a single white paper and its supporting research, authored by Krishna Murthy Kodiganti (Senior Lead Software Engineer, Capital One), written as an independent thought-leadership piece — not an official Capital One publication.
+This is a content repository, not a software project — there is no build, lint, or test tooling. It holds a single white paper and its supporting research, authored by Krishna Murthy Kodiganti (Fellow IETE, Fellow IAENG, Fellow SCRS, Senior Member IEEE, Member ACM), written as an independent thought-leadership piece.
 
 ## Status
 
@@ -20,7 +20,7 @@ This is a content repository, not a software project — there is no build, lint
 
 - **Numbered citations must stay in sync.** The `# Sources` section is a numbered list split into three tiers — Primary & Regulatory/Standards, Academic & Peer-Reviewed Literature, Industry Research & Vendor Sources — in that order. When adding or removing a source, update both this file and the research file, re-verify numbering/links match, and place new sources in the correct tier.
 - **Sourcing quality: aim for primary and peer-reviewed where possible.** Prefer, in order: peer-reviewed literature (e.g., Sambasivan et al., "Data Cascades in High-Stakes AI," CHI 2021), named public case studies with primary reporting (e.g., Unity Technologies' 2022 earnings-call disclosure), and standards bodies (ISO 8000, DAMA-DMBOK, NIST AI RMF) over vendor-blog restatements of the same figures. Vendor sources are fine as a last resort but should be flagged in the Sources section's closing note, not presented as equivalent-weight evidence.
-- **Byline and disclaimer are required together.** Any published version of the white paper must carry both the author byline (*Krishna Murthy Kodiganti, Senior Lead Software Engineer, Capital One*) and the disclaimer that views are the author's own and don't represent Capital One — title block, Contact Information section, and any excerpt used elsewhere.
+- **Byline required in the title block and Contact Information section.** Author byline is *Krishna Murthy Kodiganti, Fellow IETE, Fellow IAENG, Fellow SCRS, Senior Member IEEE, Member ACM* — matches the credentials-based byline style used in the author's Policy Enforcement white paper. No employer is named, so no employer disclaimer is needed (unlike an earlier draft of this paper, which named Capital One and carried a matching disclaimer — both were removed).
 - **Cross-industry framing, but taxonomy-first structure.** This paper organizes its core argument by failure-mode taxonomy (Section 2) and only uses industry vignettes as supporting evidence (Section 4) that the taxonomy holds across sectors — don't let Section 4 become the spine of the argument.
 - **No embedded images.** Real chart/diagram assets live in `assets/` as standalone SVG files, linked via plain `![alt text](assets/...)`. Never inline base64 image data in the markdown.
 - **Tone: no "agentic"/AI-essay register.** No meta-referential framing ("this paper argues/shows"), no "not X, it's Y" rhetorical contrast constructions, no repeated-word rhetorical cadences, no heavy em-dash-aside overuse. State claims directly (declarative, third-person); prefer commas/colons/separate sentences to stacked em-dashes.

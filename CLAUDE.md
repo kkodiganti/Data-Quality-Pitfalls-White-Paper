@@ -19,7 +19,8 @@ Treat further citation work the same way as before: research a real source or le
 
 - `Data-Quality-Pitfalls-White-Paper.md` — the white paper itself. Working title: *Data Quality Pitfalls: From Recurring Failure Modes to a Cross-Industry Prevention Framework*. Thesis: most data-quality failures are not random bad luck but symptoms of missing infrastructure (no contracts at ingestion, no continuous observability/lineage, no named ownership) — and the same taxonomy of failure modes recurs whether the downstream consumer is a compliance report, a BI dashboard, or an ML training set. Section 3.2 grounds the framework with two orthogonal, architecture-agnostic dimensions: *when* a check runs (ingress/in-flight/egress — REST APIs and batch/Spark are cited only as illustrative implementations, not the scope) and *how deep* it goes (syntactic → internal-consistency → external ground-truth verification, the last of which produces a confidence score rather than a pass/fail and applies to any claim an organization holds about the world — address, phone ownership, email deliverability, business registration, document authenticity, etc. — not just the address/identity examples that happen to be sourced so far).
 - `Data-Quality-Pitfalls-White-Paper-Research.md` — the sourcing backbone: compiled links and figures, organized by taxonomy category (mirrors the white paper's Section 2 structure rather than by industry, since the taxonomy — not industry vertical — is the primary organizing axis of this paper).
-- `assets/` — 6 hand-authored SVG figures, embedded in the paper in this document order: `chart-ml-data-cascades.svg` (Fig. 1, Section 2.4), `chart-reference-architecture.svg` (Fig. 2, Section 3.1), `chart-lifecycle-checkpoints.svg` (Fig. 3, Section 3.2.1), `chart-verification-depth.svg` (Fig. 4, Section 3.2.2), `chart-outcomes-roi-vs-incidents.svg` (Fig. 5, Section 3.4), `chart-cross-industry-vignettes.svg` (Fig. 6, Section 4). Each has a validated PNG export in `assets/export-png/`.
+- `assets/` — 6 hand-authored SVG figures, embedded in the paper in this document order: `chart-ml-data-cascades.svg` (Fig. 1, Section 2.4), `chart-reference-architecture.svg` (Fig. 2, Section 3.1), `chart-lifecycle-checkpoints.svg` (Fig. 3, Section 3.2.1), `chart-verification-depth.svg` (Fig. 4, Section 3.2.2), `chart-outcomes-roi-vs-incidents.svg` (Fig. 5, Section 3.4), `chart-cross-industry-vignettes.svg` (Fig. 6, Section 4). Each has a validated PNG export in `assets/export-png/`. Also holds `pdf-style.css`, the print stylesheet used to generate the PDF (see PDF conventions below).
+- `Data-Quality-Pitfalls-White-Paper.pdf` — the SSRN-ready PDF, generated from the markdown (see PDF conventions below for how to regenerate it after any content edit — it is not auto-rebuilt).
 
 ## Document conventions
 
@@ -30,6 +31,26 @@ Treat further citation work the same way as before: research a real source or le
 - **No embedded images.** Real chart/diagram assets live in `assets/` as standalone SVG files, linked via plain `![alt text](assets/...)`. Never inline base64 image data in the markdown.
 - **Tone: no "agentic"/AI-essay register.** No meta-referential framing ("this paper argues/shows"), no "not X, it's Y" rhetorical contrast constructions, no repeated-word rhetorical cadences, no heavy em-dash-aside overuse. State claims directly (declarative, third-person); prefer commas/colons/separate sentences to stacked em-dashes.
 - **Governing terminology.** "Data quality" is the umbrella term. Distinguish explicitly on first use: *data quality* (fitness for use of data at rest or in motion), *data observability* (continuous monitoring for freshness/volume/schema/distribution anomalies), *data governance* (ownership, accountability, and policy), *data contract* (a versioned, enforced interface between a data producer and consumer). Section 3.2 adds two more paired terms, also to be defined on first use and not blurred together: *validation checkpoint* (when in the lifecycle a check runs — ingress/in-flight/egress) and *verification depth* (how deep it goes — syntactic/internal-consistency/external-ground-truth); don't introduce a fifth overlapping term without adding it to the same definition sentences.
+
+## PDF generation (for SSRN)
+
+No LaTeX engine is installed in this environment (checked: pdflatex, xelatex, lualatex, tectonic — none present), so the PDF is built via pandoc → self-contained HTML → headless Chrome print-to-PDF, not pandoc's default LaTeX path. Regenerate after any content edit with:
+
+```
+pandoc --from=markdown-implicit_figures Data-Quality-Pitfalls-White-Paper.md \
+  -o /tmp/dq-paper.html --standalone --embed-resources --css assets/pdf-style.css
+
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+  --headless --disable-gpu --no-pdf-header-footer \
+  --print-to-pdf="Data-Quality-Pitfalls-White-Paper.pdf" \
+  "file:///tmp/dq-paper.html"
+```
+
+Two gotchas hit building this the first time, both silent (no error, just wrong output — always visually check a few pages with the Read tool's PDF support after regenerating, don't just trust exit code 0):
+- **Don't pass `--metadata title=...` to pandoc.** With `--standalone`, pandoc's default HTML template renders that metadata as its own visible `<h1 class="title">` at the top of the body — since the markdown's first line is already its own real title heading, this produces a duplicate title stacked above the real one. Omit `--metadata title` entirely; the page's `<title>` tag (browser-tab metadata, invisible in the PDF) still gets set from the document's first heading automatically.
+- **`--from=markdown-implicit_figures` is required, not optional.** Pandoc's default "implicit figures" extension auto-wraps any paragraph containing only an image into `<figure><img><figcaption>` using the image's **alt text** as the visible caption — but this paper's alt text is long, accessibility-oriented description text, not a caption, and every figure already has its own hand-written `*Figure N. ...*` caption line right after it in the markdown. Without disabling this extension, every figure shows two stacked captions (the raw alt text, then the real one). `-f markdown-implicit_figures` (the leading `-` disables the extension) fixes it.
+
+`assets/pdf-style.css` sets: Letter page size with 1in margins, serif body text (Georgia) with sans-serif headings (matches the chart figures' sans-serif labels), bordered/shaded tables, `page-break-inside: avoid` on figures and tables so they don't split across a page boundary, and a centered/italicized treatment for the title-block byline. The 17-page output was visually checked (title page, prose, both a simple and a complex wide diagram, a table, and the full Sources list) via the Read tool's PDF support, not just generated and assumed correct.
 
 ## Chart conventions
 
